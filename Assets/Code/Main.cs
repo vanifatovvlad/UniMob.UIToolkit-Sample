@@ -21,13 +21,16 @@ namespace Code
 
             var viewStore = new ViewStore(Lifetime);
 
-            _appComponentBuilder = new UiComponentBuilder(Lifetime, uiDocument.rootVisualElement);
-            _appComponentBuilder.Build(new AppComponent(appTreeAsset, viewStore,
-                overviewTreeAsset, documentTreeAsset));
-            
+            uiDocument.rootVisualElement.Render(Lifetime, BuildApp);
+
             viewStore.ShowOverview();
 
             // TODO: start router
+
+            UiComponent BuildApp()
+            {
+                return new AppComponent(appTreeAsset, viewStore, overviewTreeAsset, documentTreeAsset);
+            }
         }
     }
 }
