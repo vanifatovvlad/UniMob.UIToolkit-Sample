@@ -1,0 +1,10 @@
+﻿<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); width: 100%; height: 100%;">
+        <ui:VisualElement name="DocumentElement" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);">
+            <ui:Label text="Document" />
+            <ui:Label name="name" text="Label"  />
+            <ui:Label name="text" text="Label" />
+            <ui:Button name="back-button" text="Back to documents" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
