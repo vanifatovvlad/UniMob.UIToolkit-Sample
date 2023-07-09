@@ -1,4 +1,5 @@
-﻿using Code.Store;
+﻿using System;
+using Code.Store;
 using UniMob.UIToolkit;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -29,16 +30,25 @@ namespace Code.UiComponents
 
         private UiComponent BuildContent()
         {
-            return _viewStore.CurrentPage switch
+            try
             {
-                OverviewPage overviewPage => BuildOverview(overviewPage),
-                DocumentPage documentPage => BuildDocument(documentPage),
-                _ => null,
-            };
+                return _viewStore.CurrentPage switch
+                {
+                    OverviewPage overviewPage => BuildOverview(overviewPage),
+                    DocumentPage documentPage => BuildDocument(documentPage),
+                    _ => null,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ErrorComponent(_viewStore, ex);
+            }
         }
 
         private UiComponent BuildOverview(OverviewPage overviewPage)
         {
+            var _ = overviewPage.Documents; // throws error if exist
+
             return new OverviewComponent(_viewStore, overviewPage);
         }
 
@@ -48,6 +58,8 @@ namespace Code.UiComponents
             {
                 return new LoginComponent(_viewStore, afterLogin: () => _viewStore.ShowDocument(documentPage.DocumentId));
             }
+
+            var _ = documentPage.Document; // throws error if exist
 
             return new DocumentComponent(_viewStore, documentPage);
         }

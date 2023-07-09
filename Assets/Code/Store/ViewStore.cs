@@ -45,7 +45,7 @@ namespace Code.Store
 
         public void ShowDocument(int documentId)
         {
-            CurrentPage = new DocumentPage(_fetcher, documentId);
+            CurrentPage = new DocumentPage(_fetcher, this, documentId);
         }
 
         public async void PerformLogin(string username, string password, Action<bool> callback)

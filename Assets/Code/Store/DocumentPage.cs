@@ -1,31 +1,39 @@
-﻿using Code.Domain;
+﻿using System;
+using Code.Domain;
 using Cysharp.Threading.Tasks;
 using UniMob;
+using UniMob.Utils;
 
 namespace Code.Store
 {
     public class DocumentPage : Page
     {
         private readonly Fetcher _fetcher;
+        private readonly ViewStore _viewStore;
+        private readonly AsyncAtom<Document> _documentAtom;
 
-        public DocumentPage(Fetcher fetcher, int documentId)
+        public DocumentPage(Fetcher fetcher, ViewStore viewStore, int documentId)
         {
             _fetcher = fetcher;
+            _viewStore = viewStore;
             DocumentId = documentId;
+            _documentAtom = AsyncAtom.FromUniTask<Document>(Lifetime, sink => sink(LoadDocument()));
 
             LoadDocument().Forget();
         }
 
         public int DocumentId { get; }
 
-        [Atom] public LoadStatus Status { get; private set; }
-        [Atom] public Document Document { get; private set; }
+        [Atom] public AsyncValue<Document> Document => _documentAtom.Value;
 
-        private async UniTask LoadDocument()
+        private async UniTask<Document> LoadDocument()
         {
-            Status = LoadStatus.Loading;
-            Document = await _fetcher.Fetch<Document>($"/json/{DocumentId}.json");
-            Status = LoadStatus.Succeed;
+            if (!_viewStore.IsAuthenticated)
+            {
+                throw new InvalidOperationException("Not authenticated");
+            }
+
+            return await _fetcher.Fetch<Document>($"/json/{DocumentId}.json");
         }
     }
 }

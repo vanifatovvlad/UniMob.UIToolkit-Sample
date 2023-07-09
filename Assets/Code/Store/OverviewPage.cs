@@ -1,31 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Code.Domain;
 using Cysharp.Threading.Tasks;
 using UniMob;
+using UniMob.Utils;
 
 namespace Code.Store
 {
     public class OverviewPage : Page
     {
         private readonly Fetcher _fetcher;
+        private readonly AsyncAtom<IList<DocumentInfo>> _documentsAtom;
 
         public OverviewPage(Fetcher fetcher)
         {
             _fetcher = fetcher;
-
-            LoadDocuments().Forget();
+            _documentsAtom = AsyncAtom.FromUniTask<IList<DocumentInfo>>(Lifetime, sink => sink(LoadDocuments()));
         }
 
-        [Atom] public LoadStatus Status { get; private set; }
-        [Atom] public IList<DocumentInfo> Documents { get; private set; } = Array.Empty<DocumentInfo>();
+        [Atom] public AsyncValue<IList<DocumentInfo>> Documents => _documentsAtom.Value;
 
-        private async UniTask LoadDocuments()
+        private async UniTask<IList<DocumentInfo>> LoadDocuments()
         {
-            Status = LoadStatus.Loading;
-            Documents = await _fetcher.Fetch<DocumentInfo[]>("/json/documents.json");
-            Status = LoadStatus.Succeed;
+            return await _fetcher.Fetch<DocumentInfo[]>("/json/documents.json");
         }
     }
 }
