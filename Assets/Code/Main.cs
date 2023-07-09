@@ -16,12 +16,11 @@ namespace Code
 
             var fetcher = new Fetcher();
             var viewStore = new ViewStore(Lifetime, fetcher);
+            var router = new Router(viewStore);
 
-            uiDocument.rootVisualElement.Render(Lifetime, () => new AppComponent(viewStore));
+            uiDocument.rootVisualElement.Render(Lifetime, () => new AppComponent(viewStore, router));
 
             viewStore.ShowOverview();
-
-            // TODO: start router
         }
     }
 }

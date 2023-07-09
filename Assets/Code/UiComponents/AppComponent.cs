@@ -8,19 +8,23 @@ namespace Code.UiComponents
     public class AppComponent : UiTemplateComponent
     {
         private readonly ViewStore _viewStore;
+        private readonly Router _router;
 
-        public AppComponent(ViewStore viewStore)
+        public AppComponent(ViewStore viewStore, Router router)
             : base(Resources.Load<VisualTreeAsset>("App"))
         {
             _viewStore = viewStore;
+            _router = router;
         }
 
         public override void Init(VisualElement root)
         {
+            var routeInput = root.Q<TextField>("route-input");
+
             root.Q("app-content").Render(Lifetime, () => BuildContent());
             root.Q<Label>("user-name").Render(Lifetime, () => _viewStore.IsAuthenticated ? _viewStore.CurrentUser.Value.Name : "unknown user");
-            root.Q<TextField>("route-input").Render(Lifetime, () => _viewStore.CurrentPath);
-            root.Q<Button>("route-go-button").OnClick(Lifetime, () => Debug.Log("CLICK!"));
+            routeInput.Render(Lifetime, () => _viewStore.CurrentPath);
+            root.Q<Button>("route-go-button").OnClick(Lifetime, () => _router.Go(routeInput.text));
         }
 
         private UiComponent BuildContent()
