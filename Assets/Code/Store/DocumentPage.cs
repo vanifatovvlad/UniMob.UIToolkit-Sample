@@ -1,16 +1,29 @@
-﻿namespace Code.Store
+﻿using Code.Domain;
+using Cysharp.Threading.Tasks;
+using UniMob;
+
+namespace Code.Store
 {
     public class DocumentPage : Page
     {
+        private readonly Fetcher _fetcher;
         public int DocumentId { get; }
-        public string DocumentName { get; }
+        [Atom] public LoadStatus Status { get; private set; }
+        [Atom] public Document Document { get; private set; }
 
-        public DocumentPage(int documentId)
+        public DocumentPage(Fetcher fetcher, int documentId)
         {
+            _fetcher = fetcher;
             DocumentId = documentId;
-            DocumentName = "Document " + documentId;
 
-            // TODO fetch document
+            LoadDocument().Forget();
+        }
+
+        private async UniTask LoadDocument()
+        {
+            Status = LoadStatus.Loading;
+            Document = await _fetcher.Fetch<Document>($"/json/{DocumentId}.json");
+            Status = LoadStatus.Succeed;
         }
     }
 }

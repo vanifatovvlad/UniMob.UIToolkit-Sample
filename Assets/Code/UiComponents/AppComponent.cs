@@ -9,7 +9,7 @@ namespace Code.UiComponents
     {
         private readonly ViewStore _viewStore;
 
-        public AppComponent(ViewStore viewStore) 
+        public AppComponent(ViewStore viewStore)
             : base(Resources.Load<VisualTreeAsset>("App"))
         {
             _viewStore = viewStore;
@@ -18,7 +18,7 @@ namespace Code.UiComponents
         public override void Init(VisualElement root)
         {
             root.Q("app-content").Render(Lifetime, () => BuildContent());
-            root.Q<Label>("user-name").Render(Lifetime, () => _viewStore.IsAuthenticated ? _viewStore.CurrentUser.Name : "unknown user");
+            root.Q<Label>("user-name").Render(Lifetime, () => _viewStore.IsAuthenticated ? _viewStore.CurrentUser.Value.Name : "unknown user");
             root.Q<TextField>("route-input").Render(Lifetime, () => _viewStore.CurrentPath);
             root.Q<Button>("route-go-button").OnClick(Lifetime, () => Debug.Log("CLICK!"));
         }
@@ -40,11 +40,10 @@ namespace Code.UiComponents
 
         private UiComponent BuildDocument(DocumentPage documentPage)
         {
-            //TODO return Login if not authenticated
-            //if (!_viewStore.IsAuthenticated)
-            //{
-            //    return new LoginComponent();
-            //}
+            if (!_viewStore.IsAuthenticated)
+            {
+                return new LoginComponent(_viewStore, afterLogin: () => _viewStore.ShowDocument(documentPage.DocumentId));
+            }
 
             return new DocumentComponent(_viewStore, documentPage);
         }

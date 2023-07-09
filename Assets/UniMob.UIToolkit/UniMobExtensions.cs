@@ -54,12 +54,31 @@ namespace UniMob.UIToolkit
 
         public static void Render(this TextElement text, Lifetime lifetime, Func<string> pull)
         {
-            Atom.Reaction(lifetime, pull, v => text.text = v);
+            Atom.Reaction(lifetime, pull, v => text.text = v ?? string.Empty);
         }
 
         public static void Render(this TextField textField, Lifetime lifetime, Func<string> pull)
         {
-            Atom.Reaction(lifetime, pull, v => textField.value = v);
+            Atom.Reaction(lifetime, pull, v => textField.value = v ?? string.Empty);
+        }
+
+        public static void OnChange(this TextField textField, Lifetime lifetime, Action<string> callback)
+        {
+            if (lifetime.IsDisposed)
+            {
+                return;
+            }
+
+            lifetime.Register(() => textField.UnregisterValueChangedCallback(Call));
+            textField.RegisterValueChangedCallback(Call);
+
+            void Call(ChangeEvent<string> evt)
+            {
+                using (Atom.NoWatch)
+                {
+                    callback?.Invoke(evt.newValue);
+                }
+            }
         }
 
         public static void OnClick(this Button button, Lifetime lifetime, Action callback)

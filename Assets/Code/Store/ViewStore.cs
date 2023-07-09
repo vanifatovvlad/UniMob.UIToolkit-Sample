@@ -1,22 +1,25 @@
-﻿using Code.Domain;
+﻿using System;
+using Code.Domain;
+using Cysharp.Threading.Tasks;
 using UniMob;
 
 namespace Code.Store
 {
     public class ViewStore : ILifetimeScope
     {
+        private readonly Fetcher _fetcher;
         private Page _currentPage;
 
-        //TODO fetch
-        public ViewStore(Lifetime lifetime)
+        public ViewStore(Lifetime lifetime, Fetcher fetcher)
         {
+            _fetcher = fetcher;
             Lifetime = lifetime;
         }
 
         public Lifetime Lifetime { get; }
 
-        [Atom] public bool IsAuthenticated => CurrentUser.Name != null;
-        [Atom] public UserInfo CurrentUser => new UserInfo("test user");
+        [Atom] public bool IsAuthenticated => CurrentUser.HasValue;
+        [Atom] public UserInfo? CurrentUser { get; private set; }
 
         [Atom] public string CurrentPath => CurrentPage switch
         {
@@ -37,14 +40,26 @@ namespace Code.Store
 
         public void ShowOverview()
         {
-            CurrentPage = new OverviewPage();
+            CurrentPage = new OverviewPage(_fetcher);
         }
 
         public void ShowDocument(int documentId)
         {
-            CurrentPage = new DocumentPage(documentId);
+            CurrentPage = new DocumentPage(_fetcher, documentId);
         }
 
-        //TODO add login
+        public async void PerformLogin(string username, string password, Action<bool> callback)
+        {
+            try
+            {
+                await UniTask.Delay(TimeSpan.FromSeconds(2f));
+                CurrentUser = await _fetcher.Fetch<UserInfo>($"/json/{username}-{password}.json");
+                callback(true);
+            }
+            catch
+            {
+                callback(false);
+            }
+        }
     }
 }

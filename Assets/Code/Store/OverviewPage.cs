@@ -9,20 +9,22 @@ namespace Code.Store
 {
     public class OverviewPage : Page
     {
-        public OverviewPage()
+        private readonly Fetcher _fetcher;
+
+        public OverviewPage(Fetcher fetcher)
         {
+            _fetcher = fetcher;
+
             LoadDocuments().Forget();
         }
 
-        [Atom] public LoadStatus Status { get; private set; } = LoadStatus.Loading;
+        [Atom] public LoadStatus Status { get; private set; }
         [Atom] public IList<DocumentInfo> Documents { get; private set; } = Array.Empty<DocumentInfo>();
 
         private async UniTask LoadDocuments()
         {
-            await UniTask.Delay(TimeSpan.FromSeconds(1));
-
-            // TODO load documents
-            Documents = Enumerable.Range(0, 100).Select(i => new DocumentInfo(i, $"Document {i}")).ToList();
+            Status = LoadStatus.Loading;
+            Documents = await _fetcher.Fetch<DocumentInfo[]>("/json/documents.json");
             Status = LoadStatus.Succeed;
         }
     }

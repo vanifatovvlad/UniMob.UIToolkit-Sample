@@ -14,7 +14,8 @@ namespace Code
         {
             base.Start();
 
-            var viewStore = new ViewStore(Lifetime);
+            var fetcher = new Fetcher();
+            var viewStore = new ViewStore(Lifetime, fetcher);
 
             uiDocument.rootVisualElement.Render(Lifetime, () => new AppComponent(viewStore));
 

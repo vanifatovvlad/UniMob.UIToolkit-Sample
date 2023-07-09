@@ -22,8 +22,6 @@ namespace Code.UiComponents
             root.Q<ListView>("documents-list").Render(Lifetime,
                 () => _overviewPage.Documents,
                 it => new OverviewItemComponent(_viewStore, it));
-
-            //TODO render load status
         }
     }
 }

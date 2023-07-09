@@ -19,10 +19,9 @@ namespace Code.UiComponents
 
         public override void Init(VisualElement root)
         {
-            root.Q<Label>("name").Render(Lifetime, () => _documentPage.DocumentName);
+            root.Q<Label>("name").Render(Lifetime, () => _documentPage.Document.Name);
+            root.Q<Label>("text").Render(Lifetime, () => _documentPage.Document.Text);
             root.Q<Button>("back-button").OnClick(Lifetime, () => _viewStore.ShowOverview());
-
-            //TODO render load status
         }
     }
 }
