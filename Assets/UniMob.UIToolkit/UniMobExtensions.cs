@@ -1,25 +1,59 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine.UIElements;
 
 namespace UniMob.UIToolkit
 {
     public static class UniMobExtensions
     {
-        public static void Render<T>(this ListView listView, Lifetime lifetime, Func<IList<T>> sources, Func<T, UiComponent> func)
+        public static void Render<T>([NotNull] this ListView listView, Lifetime lifetime, [NotNull] Func<IList<T>> sources, [NotNull] Func<T, UiComponent> func)
         {
+            if (listView == null) throw new ArgumentNullException(nameof(listView));
+            if (sources == null) throw new ArgumentNullException(nameof(sources));
+            if (func == null) throw new ArgumentNullException(nameof(func));
+
             var sourcesAtom = Atom.Computed(lifetime, sources);
 
-            listView.makeItem += () =>
+            listView.makeItem += MakeItem;
+            listView.destroyItem += DestroyItem;
+            listView.bindItem += BindItem;
+            listView.unbindItem += UnbindItem;
+
+            lifetime.Register(Dispose);
+
+            Atom.Reaction(lifetime, () => listView.itemsSource = (IList) sourcesAtom.Value);
+
+            void Dispose()
+            {
+                listView.makeItem -= MakeItem;
+                listView.destroyItem -= DestroyItem;
+                listView.bindItem -= BindItem;
+                listView.unbindItem -= UnbindItem;
+                listView.itemsSource = Array.Empty<T>();
+            }
+
+            VisualElement MakeItem()
             {
                 using var _ = Atom.NoWatch;
 
-                var item = new VisualElement();
-                item.userData = new UiComponentBuilder(lifetime, item);
-                return item;
-            };
-            listView.bindItem += (element, i) =>
+                var element = new VisualElement();
+                element.userData = new UiComponentBuilder(lifetime, element);
+                return element;
+            }
+
+            void DestroyItem(VisualElement element)
+            {
+                using var _ = Atom.NoWatch;
+
+                if (element.userData is UiComponentBuilder builder)
+                {
+                    builder.Dispose();
+                }
+            }
+
+            void BindItem(VisualElement element, int i)
             {
                 using var _ = Atom.NoWatch;
 
@@ -27,8 +61,9 @@ namespace UniMob.UIToolkit
                 {
                     builder.Build(func.Invoke(sourcesAtom.Value[i]));
                 }
-            };
-            listView.unbindItem += (element, i) =>
+            }
+
+            void UnbindItem(VisualElement element, int i)
             {
                 using var _ = Atom.NoWatch;
 
@@ -36,34 +71,46 @@ namespace UniMob.UIToolkit
                 {
                     builder.Build(null);
                 }
-            };
-
-            Atom.Reaction(lifetime, () => listView.itemsSource = (IList) sourcesAtom.Value);
-            lifetime.Register(() => listView.itemsSource = Array.Empty<T>());
+            }
         }
 
-        public static void Render(this VisualElement root, Lifetime lifetime, Func<UiComponent> func)
+        public static void Render([NotNull] this VisualElement root, Lifetime lifetime, [NotNull] Func<UiComponent> func)
         {
+            if (root == null) throw new ArgumentNullException(nameof(root));
+            if (func == null) throw new ArgumentNullException(nameof(func));
+
             Render(new UiComponentBuilder(lifetime, root), lifetime, func);
         }
 
-        public static void Render(this UiComponentBuilder builder, Lifetime lifetime, Func<UiComponent> func)
+        public static void Render([NotNull] this UiComponentBuilder builder, Lifetime lifetime, [NotNull] Func<UiComponent> func)
         {
+            if (builder == null) throw new ArgumentNullException(nameof(builder));
+            if (func == null) throw new ArgumentNullException(nameof(func));
+
             Atom.Reaction(lifetime, func, v => builder.Build(v));
         }
 
-        public static void Render(this TextElement text, Lifetime lifetime, Func<string> pull)
+        public static void Render([NotNull] this TextElement text, Lifetime lifetime, [NotNull] Func<string> pull)
         {
+            if (text == null) throw new ArgumentNullException(nameof(text));
+            if (pull == null) throw new ArgumentNullException(nameof(pull));
+
             Atom.Reaction(lifetime, pull, v => text.text = v ?? string.Empty);
         }
 
-        public static void Render(this TextField textField, Lifetime lifetime, Func<string> pull)
+        public static void Render([NotNull] this TextField textField, Lifetime lifetime, [NotNull] Func<string> pull)
         {
+            if (textField == null) throw new ArgumentNullException(nameof(textField));
+            if (pull == null) throw new ArgumentNullException(nameof(pull));
+
             Atom.Reaction(lifetime, pull, v => textField.value = v ?? string.Empty);
         }
 
-        public static void OnChange(this TextField textField, Lifetime lifetime, Action<string> callback)
+        public static void OnChange([NotNull] this TextField textField, Lifetime lifetime, [NotNull] Action<string> callback)
         {
+            if (textField == null) throw new ArgumentNullException(nameof(textField));
+            if (callback == null) throw new ArgumentNullException(nameof(callback));
+
             if (lifetime.IsDisposed)
             {
                 return;
@@ -75,12 +122,15 @@ namespace UniMob.UIToolkit
             void Call(ChangeEvent<string> evt)
             {
                 using var _ = Atom.NoWatch;
-                callback?.Invoke(evt.newValue);
+                callback.Invoke(evt.newValue);
             }
         }
 
-        public static void OnClick(this Button button, Lifetime lifetime, Action callback)
+        public static void OnClick([NotNull] this Button button, Lifetime lifetime, [NotNull] Action callback)
         {
+            if (button == null) throw new ArgumentNullException(nameof(button));
+            if (callback == null) throw new ArgumentNullException(nameof(callback));
+
             if (lifetime.IsDisposed)
             {
                 return;
@@ -92,7 +142,7 @@ namespace UniMob.UIToolkit
             void Call()
             {
                 using var _ = Atom.NoWatch;
-                callback?.Invoke();
+                callback.Invoke();
             }
         }
     }

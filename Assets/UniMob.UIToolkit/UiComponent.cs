@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 using UnityEngine.UIElements;
 
 namespace UniMob.UIToolkit
@@ -9,9 +10,9 @@ namespace UniMob.UIToolkit
 
         public Lifetime Lifetime => _lifetimeController.Lifetime;
 
-        public abstract void BuildTree(VisualElement root);
+        public abstract void BuildTree([NotNull] VisualElement root);
 
-        public abstract void Init(VisualElement root);
+        public abstract void Init([NotNull] VisualElement root);
 
         public virtual void Dispose()
         {

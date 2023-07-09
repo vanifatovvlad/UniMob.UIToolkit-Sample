@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 using UnityEngine.UIElements;
 
 namespace UniMob.UIToolkit
@@ -7,7 +8,7 @@ namespace UniMob.UIToolkit
     {
         public VisualTreeAsset Template { get; }
 
-        protected UiTemplateComponent(VisualTreeAsset template)
+        protected UiTemplateComponent([NotNull] VisualTreeAsset template)
         {
             if (template == null)
             {
