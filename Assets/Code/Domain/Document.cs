@@ -4,8 +4,15 @@ namespace Code.Domain
 {
     public struct Document
     {
-        [JsonProperty("id")] public int ID { get; set; }
-        [JsonProperty("name")] public string Name { get; set; }
-        [JsonProperty("text")] public string Text { get; set; }
+        public Document(int id, string name, string text)
+        {
+            ID = id;
+            Name = name;
+            Text = text;
+        }
+
+        [field: JsonProperty("id")] public int ID { get; }
+        [field: JsonProperty("name")] public string Name { get; }
+        [field: JsonProperty("text")] public string Text { get; }
     }
 }

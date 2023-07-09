@@ -7,9 +7,6 @@ namespace Code.Store
     public class DocumentPage : Page
     {
         private readonly Fetcher _fetcher;
-        public int DocumentId { get; }
-        [Atom] public LoadStatus Status { get; private set; }
-        [Atom] public Document Document { get; private set; }
 
         public DocumentPage(Fetcher fetcher, int documentId)
         {
@@ -18,6 +15,11 @@ namespace Code.Store
 
             LoadDocument().Forget();
         }
+
+        public int DocumentId { get; }
+
+        [Atom] public LoadStatus Status { get; private set; }
+        [Atom] public Document Document { get; private set; }
 
         private async UniTask LoadDocument()
         {

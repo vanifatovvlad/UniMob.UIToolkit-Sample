@@ -12,16 +12,16 @@ namespace Code.UiComponents
         private readonly ViewStore _viewStore;
         private readonly Action _afterLogin;
 
-        [Atom] private string UserName { get; set; } = string.Empty;
-        [Atom] private string UserPassword { get; set; } = string.Empty;
-        [Atom] private string Message { get; set; } = "Login with 'user' and '1234'";
-
         public LoginComponent(ViewStore viewStore, Action afterLogin)
             : base(Resources.Load<VisualTreeAsset>("Login"))
         {
             _viewStore = viewStore;
             _afterLogin = afterLogin;
         }
+
+        [Atom] private string UserName { get; set; } = string.Empty;
+        [Atom] private string UserPassword { get; set; } = string.Empty;
+        [Atom] private string Message { get; set; } = "Login with 'user' and '1234'";
 
         public override void Init(VisualElement root)
         {

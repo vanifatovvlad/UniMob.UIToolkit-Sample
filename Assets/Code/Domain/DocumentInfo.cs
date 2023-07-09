@@ -2,9 +2,15 @@
 
 namespace Code.Domain
 {
-    public struct DocumentInfo
+    public readonly struct DocumentInfo
     {
-        [JsonProperty("id")] public int ID { get; set; }
-        [JsonProperty("name")] public string Name { get; set; }
+        public DocumentInfo(int id, string name)
+        {
+            ID = id;
+            Name = name;
+        }
+
+        [field: JsonProperty("id")] public int ID { get; }
+        [field: JsonProperty("name")] public string Name { get; }
     }
 }
