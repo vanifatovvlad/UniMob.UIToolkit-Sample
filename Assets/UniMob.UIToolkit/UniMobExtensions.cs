@@ -13,28 +13,28 @@ namespace UniMob.UIToolkit
 
             listView.makeItem += () =>
             {
+                using var _ = Atom.NoWatch;
+
                 var item = new VisualElement();
                 item.userData = new UiComponentBuilder(lifetime, item);
                 return item;
             };
             listView.bindItem += (element, i) =>
             {
+                using var _ = Atom.NoWatch;
+
                 if (element.userData is UiComponentBuilder builder)
                 {
-                    using (Atom.NoWatch)
-                    {
-                        builder.Build(func.Invoke(sourcesAtom.Value[i]));
-                    }
+                    builder.Build(func.Invoke(sourcesAtom.Value[i]));
                 }
             };
             listView.unbindItem += (element, i) =>
             {
+                using var _ = Atom.NoWatch;
+
                 if (element.userData is UiComponentBuilder builder)
                 {
-                    using (Atom.NoWatch)
-                    {
-                        builder.Build(null);
-                    }
+                    builder.Build(null);
                 }
             };
 
@@ -74,10 +74,8 @@ namespace UniMob.UIToolkit
 
             void Call(ChangeEvent<string> evt)
             {
-                using (Atom.NoWatch)
-                {
-                    callback?.Invoke(evt.newValue);
-                }
+                using var _ = Atom.NoWatch;
+                callback?.Invoke(evt.newValue);
             }
         }
 
@@ -93,10 +91,8 @@ namespace UniMob.UIToolkit
 
             void Call()
             {
-                using (Atom.NoWatch)
-                {
-                    callback?.Invoke();
-                }
+                using var _ = Atom.NoWatch;
+                callback?.Invoke();
             }
         }
     }

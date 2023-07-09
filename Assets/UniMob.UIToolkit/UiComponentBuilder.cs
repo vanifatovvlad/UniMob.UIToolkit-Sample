@@ -18,6 +18,8 @@ namespace UniMob.UIToolkit
 
         public void Build(UiComponent component)
         {
+            using var _ = Atom.NoWatch;
+
             var template = component is UiTemplateComponent templateComponent ? templateComponent.Template : null;
 
             var requiresTreeRebuild = component != null &&
