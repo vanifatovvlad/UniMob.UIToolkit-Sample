@@ -3,14 +3,17 @@ using UniMob;
 
 namespace Code.Store
 {
-    public class ViewStore : Store
+    public class ViewStore : ILifetimeScope
     {
         private Page _currentPage;
 
         //TODO fetch
-        public ViewStore(Lifetime lifetime) : base(lifetime)
+        public ViewStore(Lifetime lifetime)
         {
+            Lifetime = lifetime;
         }
+
+        public Lifetime Lifetime { get; }
 
         [Atom] public bool IsAuthenticated => CurrentUser.Name != null;
         [Atom] public UserInfo CurrentUser => new UserInfo("test user");

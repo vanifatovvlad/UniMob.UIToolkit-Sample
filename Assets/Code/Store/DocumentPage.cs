@@ -1,17 +1,14 @@
-﻿using Code.Domain;
-using UniMob;
-
-namespace Code.Store
+﻿namespace Code.Store
 {
     public class DocumentPage : Page
     {
         public int DocumentId { get; }
-        [Atom] public DocumentInfo Info { get; }
+        public string DocumentName { get; }
 
         public DocumentPage(int documentId)
         {
             DocumentId = documentId;
-            Info = new DocumentInfo("Document " + documentId);
+            DocumentName = "Document " + documentId;
 
             // TODO fetch document
         }

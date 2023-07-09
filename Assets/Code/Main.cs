@@ -9,11 +9,6 @@ namespace Code
     public class Main : LifetimeMonoBehaviour
     {
         public UIDocument uiDocument;
-        public VisualTreeAsset appTreeAsset;
-        public VisualTreeAsset overviewTreeAsset;
-        public VisualTreeAsset documentTreeAsset;
-
-        private UiComponentBuilder _appComponentBuilder;
 
         protected override void Start()
         {
@@ -21,16 +16,11 @@ namespace Code
 
             var viewStore = new ViewStore(Lifetime);
 
-            uiDocument.rootVisualElement.Render(Lifetime, BuildApp);
+            uiDocument.rootVisualElement.Render(Lifetime, () => new AppComponent(viewStore));
 
             viewStore.ShowOverview();
 
             // TODO: start router
-
-            UiComponent BuildApp()
-            {
-                return new AppComponent(appTreeAsset, viewStore, overviewTreeAsset, documentTreeAsset);
-            }
         }
     }
 }

@@ -154,9 +154,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiDocument: {fileID: 882864159}
-  appTreeAsset: {fileID: 9197481963319205126, guid: 13f3119047b14b0cb8f0e4c889f0d51a, type: 3}
-  overviewTreeAsset: {fileID: 9197481963319205126, guid: e5ca0901307c64f43baee34041ef2d9d, type: 3}
-  documentTreeAsset: {fileID: 9197481963319205126, guid: 594acbc7f870f4a43b48f4c86a1a7ad3, type: 3}
 --- !u!4 &882864158
 Transform:
   m_ObjectHideFlags: 0
@@ -184,7 +181,7 @@ MonoBehaviour:
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_PanelSettings: {fileID: 11400000, guid: e080c91dc6cf25e43828120fc19388bb, type: 2}
+  m_PanelSettings: {fileID: 11400000, guid: 4a0ef11fc40745b1936068e2438e0ff0, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 0}
   m_SortingOrder: 0

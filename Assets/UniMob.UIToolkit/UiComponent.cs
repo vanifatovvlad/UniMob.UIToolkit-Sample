@@ -9,7 +9,7 @@ namespace UniMob.UIToolkit
 
         public Lifetime Lifetime => _lifetimeController.Lifetime;
 
-        public abstract void Create(VisualElement root);
+        public abstract void BuildTree(VisualElement root);
 
         public abstract void Init(VisualElement root);
 

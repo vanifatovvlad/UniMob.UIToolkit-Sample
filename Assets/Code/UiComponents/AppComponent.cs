@@ -8,15 +8,11 @@ namespace Code.UiComponents
     public class AppComponent : UiTemplateComponent
     {
         private readonly ViewStore _viewStore;
-        private readonly VisualTreeAsset _overviewTemplate;
-        private readonly VisualTreeAsset _documentTemplate;
 
-        public AppComponent(VisualTreeAsset template, ViewStore viewStore,
-            VisualTreeAsset overviewTemplate, VisualTreeAsset documentTemplate) : base(template)
+        public AppComponent(ViewStore viewStore) 
+            : base(Resources.Load<VisualTreeAsset>("App"))
         {
             _viewStore = viewStore;
-            _overviewTemplate = overviewTemplate;
-            _documentTemplate = documentTemplate;
         }
 
         public override void Init(VisualElement root)
@@ -24,7 +20,7 @@ namespace Code.UiComponents
             root.Q("app-content").Render(Lifetime, () => BuildContent());
             root.Q<Label>("user-name").Render(Lifetime, () => _viewStore.IsAuthenticated ? _viewStore.CurrentUser.Name : "unknown user");
             root.Q<TextField>("route-input").Render(Lifetime, () => _viewStore.CurrentPath);
-            root.Q<Button>("route-go-button").clickable.OnClick(Lifetime, () => Debug.Log("CLICK!"));
+            root.Q<Button>("route-go-button").OnClick(Lifetime, () => Debug.Log("CLICK!"));
         }
 
         private UiComponent BuildContent()
@@ -39,7 +35,7 @@ namespace Code.UiComponents
 
         private UiComponent BuildOverview(OverviewPage overviewPage)
         {
-            return new OverviewComponent(_overviewTemplate, _viewStore, overviewPage);
+            return new OverviewComponent(_viewStore, overviewPage);
         }
 
         private UiComponent BuildDocument(DocumentPage documentPage)
@@ -50,7 +46,7 @@ namespace Code.UiComponents
             //    return new LoginComponent();
             //}
 
-            return new DocumentComponent(_documentTemplate, _viewStore, documentPage);
+            return new DocumentComponent(_viewStore, documentPage);
         }
     }
 }

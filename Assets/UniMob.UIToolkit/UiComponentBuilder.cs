@@ -1,6 +1,4 @@
-﻿using System;
-using UnityEngine;
-using UnityEngine.UIElements;
+﻿using UnityEngine.UIElements;
 
 namespace UniMob.UIToolkit
 {
@@ -9,6 +7,7 @@ namespace UniMob.UIToolkit
         private readonly VisualElement _root;
 
         private UiComponent _activeComponent;
+        private VisualTreeAsset _activeTemplate;
 
         public UiComponentBuilder(Lifetime lifetime, VisualElement root)
         {
@@ -19,26 +18,31 @@ namespace UniMob.UIToolkit
 
         public void Build(UiComponent component)
         {
-            while (_root.childCount > 0)
+            var template = component is UiTemplateComponent templateComponent ? templateComponent.Template : null;
+
+            var requiresTreeRebuild = component != null &&
+                                      (_activeTemplate == null || template == null || _activeTemplate != template);
+
+            if (requiresTreeRebuild)
             {
-                _root.RemoveAt(0);
+                _root.Clear();
             }
 
-            if (_activeComponent != null)
-            {
-                _activeComponent.Dispose();
-                Debug.Log("Dispose " + _activeComponent.GetType().Name);
-            }
-
+            _activeComponent?.Dispose();
             _activeComponent = component;
 
-            if (_activeComponent != null)
+            if (_activeComponent == null)
             {
-                Debug.Log("Init " + _activeComponent.GetType().Name);
-
-                _activeComponent?.Create(_root);
-                _activeComponent?.Init(_root);
+                return;
             }
+
+            if (requiresTreeRebuild)
+            {
+                _activeTemplate = template;
+                _activeComponent?.BuildTree(_root);
+            }
+
+            _activeComponent?.Init(_root);
         }
     }
 }

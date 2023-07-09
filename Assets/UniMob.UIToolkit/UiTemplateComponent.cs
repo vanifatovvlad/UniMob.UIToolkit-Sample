@@ -1,19 +1,25 @@
-﻿using UnityEngine.UIElements;
+﻿using System;
+using UnityEngine.UIElements;
 
 namespace UniMob.UIToolkit
 {
     public abstract class UiTemplateComponent : UiComponent
     {
-        private readonly VisualTreeAsset _template;
+        public VisualTreeAsset Template { get; }
 
         protected UiTemplateComponent(VisualTreeAsset template)
         {
-            _template = template;
+            if (template == null)
+            {
+                throw new ArgumentNullException(nameof(template), "template must be not null");
+            }
+
+            Template = template;
         }
-        
-        public sealed override void Create(VisualElement root)
+
+        public sealed override void BuildTree(VisualElement root)
         {
-            _template.CloneTree(root);
+            Template.CloneTree(root);
         }
     }
 }
