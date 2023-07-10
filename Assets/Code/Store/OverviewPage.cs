@@ -14,7 +14,7 @@ namespace Code.Store
         public OverviewPage(Fetcher fetcher)
         {
             _fetcher = fetcher;
-            _documentsAtom = AsyncAtom.FromUniTask<IList<DocumentInfo>>(Lifetime, sink => sink(LoadDocuments()));
+            _documentsAtom = AsyncAtom.FromUniTask(Lifetime, () => LoadDocuments());
         }
 
         [Atom] public AsyncValue<IList<DocumentInfo>> Documents => _documentsAtom.Value;

@@ -2,6 +2,7 @@
 using Code.Domain;
 using Cysharp.Threading.Tasks;
 using UniMob;
+using UnityEngine;
 
 namespace Code.Store
 {
@@ -56,8 +57,9 @@ namespace Code.Store
                 CurrentUser = await _fetcher.Fetch<UserInfo>($"/json/{username}-{password}.json");
                 callback(true);
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.LogException(ex);
                 callback(false);
             }
         }

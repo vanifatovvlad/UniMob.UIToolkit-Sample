@@ -6,7 +6,7 @@ namespace UniMob.Utils
 {
     public static class AsyncAtom
     {
-        public static AsyncAtom<T> FromUniTask<T>(Lifetime lifetime, Action<AsyncAtomSink<T>> func)
+        public static AsyncAtom<T> FromUniTask<T>(Lifetime lifetime, Func<UniTask<T>> func)
         {
             return new AsyncAtom<T>(lifetime, func);
         }
@@ -15,13 +15,13 @@ namespace UniMob.Utils
     public class AsyncAtom<T>
     {
         private readonly Atom<AsyncValue<T>> _atom;
-        private readonly Action<AsyncAtomSink<T>> _func;
+        private readonly Func<UniTask<T>> _func;
 
         private bool _initialized;
         private AsyncValue<T> _value;
         private ExceptionDispatchInfo _exception;
 
-        internal AsyncAtom(Lifetime lifetime, Action<AsyncAtomSink<T>> func)
+        internal AsyncAtom(Lifetime lifetime, Func<UniTask<T>> func)
         {
             _func = func;
             _atom = Atom.Computed(lifetime, Compute);
@@ -48,7 +48,7 @@ namespace UniMob.Utils
             _value = new AsyncValue<T>(true, default);
             _exception = null;
             _atom.Invalidate();
-            _func.Invoke(task => Load(task).Forget());
+            Load(_func.Invoke()).Forget();
         }
 
         private AsyncValue<T> Compute()
@@ -72,8 +72,6 @@ namespace UniMob.Utils
             _atom.Invalidate();
         }
     }
-
-    public delegate void AsyncAtomSink<T>(UniTask<T> task);
 
     public readonly struct AsyncValue<T>
     {

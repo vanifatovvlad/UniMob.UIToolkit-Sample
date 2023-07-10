@@ -17,7 +17,7 @@ namespace Code.Store
             _fetcher = fetcher;
             _viewStore = viewStore;
             DocumentId = documentId;
-            _documentAtom = AsyncAtom.FromUniTask<Document>(Lifetime, sink => sink(LoadDocument()));
+            _documentAtom = AsyncAtom.FromUniTask(Lifetime, () => LoadDocument());
 
             LoadDocument().Forget();
         }

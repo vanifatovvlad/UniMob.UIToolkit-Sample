@@ -2,6 +2,7 @@
 using Code.UiComponents;
 using UniMob;
 using UniMob.UIToolkit;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Code
@@ -17,6 +18,8 @@ namespace Code
             var fetcher = new Fetcher();
             var viewStore = new ViewStore(Lifetime, fetcher);
             var router = new Router(viewStore);
+
+            uiDocument.rootVisualElement.styleSheets.Add(Resources.Load<StyleSheet>("styles"));
 
             uiDocument.rootVisualElement.Render(Lifetime, () => new AppComponent(viewStore, router));
 
